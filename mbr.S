@@ -27,14 +27,17 @@ loadk:
     test %bl, %bl
     jne error
 
+    xor %bx, %bx
+    mov %bx, %es
+
     and $0x3f, %cl
-
-    pop %dx
-
-    #cyl (ch) = lba (1) / (heads(dh) * spt(cl))
     mov %dh, %ch
+    pop %dx
+    mov %ch, %dh
+    #cyl (ch) = lba (1) / (heads(dh) * spt(cl))
     mov %cl, %al
     mul %ch
+    mov %al, %ch
     mov $0x1, %ax
     div %ch # 1 / ch
     mov %al, %ch
@@ -56,6 +59,13 @@ loadk:
 
     mov KSIZE, %al
     mov $0x2, %ah
+
+    int $0x13
+    setc %bl
+    test %ah, %ah
+    jne error
+    test %bl, %bl
+    jne error
 
 error:
     hlt
