@@ -1,11 +1,39 @@
 .code16
 
+#define S_FLAG_ 1
+#define SYSSEG 0
+#define CODE_OR_DATA 1
+
+#define DPL_FLAG_ 6
+#define RING0 0
+#define RING1 2
+#define RING2 4
+#define RING3 6
+
+#define PRESENT_FLAG_ 8
+
+#define AVAILABLE_FLAG_ 16
+#define L_FLAG_ 32
+
+#define DB_FLAG_ 64
+
+#define G_FLAG_ 128
+
 .section .data
 
 gdt:
-    .long 0x00000000
-    .long 0xAAAAAAAA
-    .long 0xBBBBBBBB
+    .long 0x0
+    .long 0x0
+
+    .long 0x0000ffff # code
+    .long 0xcfb300
+    .long 0x0000ffff # data
+    .long 0xcf9300
+gdt_end:
+
+gdtr:
+    .word gdt_end - 1
+    .long gdt
 
 .section .text
 .global __start
@@ -66,6 +94,23 @@ loadk:
     jne error
     test %bl, %bl
     jne error
+
+    mov $0x1, %eax
+    mov %cr0, %ebx
+    or %eax, %ebx
+    mov %ebx, %cr0
+
+    mov $0x10, %eax
+    mov %eax, %ds
+    mov %eax, %fs
+    mov %eax, %gs
+    mov %eax, %ss
+
+    push $0x8
+    pushl $0x100000
+    lret
+
+    lgdt (gdtr)
 
 error:
     hlt
