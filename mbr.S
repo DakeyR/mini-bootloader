@@ -22,17 +22,18 @@
 .section .data
 
 gdt:
-    .long 0x0
-    .long 0x0
+    .quad 0x0000000000000000
+    .quad 0x00cf9a000000ffff
+    .quad 0x00cf93000000ffff
 
-    .long 0x0000ffff # code
-    .long 0xcfb300
-    .long 0x0000ffff # data
-    .long 0xcf9300
+#    .long 0x0000ffff # code
+#    .long 0xcfb300
+#    .long 0x0000ffff # data
+#    .long 0xcf9300
 gdt_end:
 
 gdtr:
-    .word gdt_end - 1
+    .word gdt_end - gdt - 1
     .long gdt
 
 .section .text
@@ -45,11 +46,15 @@ __start:
 loadk:
 # Read drive parameters
     push %dx
+#    mov $0x2401, %ax
+#    int $0x15
     mov $0x08, %ah
     mov $0x00, %edi
     mov %di, %es
     int $0x13
     setc %bl
+    mov $0x0, %di
+    mov %di, %es
     test %ah, %ah
     jne error
     test %bl, %bl
@@ -85,32 +90,42 @@ loadk:
     mov %ax, %es
     mov $0x10, %bx
 
-    mov KSIZE, %al
+    mov $KSIZE, %al
     mov $0x2, %ah
 
     int $0x13
     setc %bl
+    mov $0x0, %dx
+    mov %dx, %es
     test %ah, %ah
     jne error
     test %bl, %bl
     jne error
 
-    mov $0x1, %eax
-    mov %cr0, %ebx
-    or %eax, %ebx
-    mov %ebx, %cr0
-
-    mov $0x10, %eax
-    mov %eax, %ds
-    mov %eax, %fs
-    mov %eax, %gs
-    mov %eax, %ss
-
-    push $0x8
-    pushl $0x100000
-    lret
-
     lgdt (gdtr)
+
+    mov %cr0, %ebx
+    or $0x1, %ebx
+    mov %ebx, %cr0
+    cli
+
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %fs
+    mov %ax, %gs
+    mov %ax, %ss
+    mov %ax, %es
+
+    #pushl $0x8
+    #pushl $0x100000
+    #lretl
+    ljmp $0x8, $protected_mode
+
 
 error:
     hlt
+
+.code32
+protected_mode:
+    mov $0x100000, %eax
+    jmp *%eax
