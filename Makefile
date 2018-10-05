@@ -18,7 +18,7 @@ disk: mbr.bin
 mbr.o: kernel
 mbr.o: KSIZE=$(shell $$(stat -c%s kernel/kernel32.bin)
 mbr.o: mbr.S 
-	$(CC) $(CFLAGS) -DKSIZE=1 -c $< -o $@
+	$(CC) $(CFLAGS) -DKSIZE=50 -c $< -o $@
 
 mbr: mbr.o
 	$(LD) $(LDFLAGS) $< -o $@
