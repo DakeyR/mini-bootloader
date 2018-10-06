@@ -18,6 +18,10 @@ int printf(const char *fmt, ...);
 
 static inline void outb(u16 port, u8 val)
 {
+
+  if (val == '\n')
+    outb(port, '\r');
+
 	asm volatile ("outb %0, %1\n\t":	/* No output */
 		      :"a" (val), "d"(port));
 }
