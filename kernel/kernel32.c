@@ -52,7 +52,6 @@ void setup_paging()
                   "mov %%eax, %%cr0\n":::"memory");
 }
 
-
 int main(void)
 {
     /*setup_paging();

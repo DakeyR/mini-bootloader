@@ -2,6 +2,7 @@ CC=gcc
 LD=ld
 CFLAGS = -ffreestanding \
 				-fno-stack-protector \
+				-ffunction-sections \
 				-Wall \
 				-Werror \
 				-O0 \
