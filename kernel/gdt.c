@@ -3,7 +3,7 @@
 void load_gdt()
 {
 	struct gdt_r gdtr;
-	gdtr.base = (u32) gdt;
+	gdtr.base = (u64) gdt;
 	gdtr.limit = sizeof(gdt) - 1;
 
 	//Loading the GDTR

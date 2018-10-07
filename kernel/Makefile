@@ -4,7 +4,6 @@ CFLAGS = -ffreestanding \
 				-fno-stack-protector \
 				-ffunction-sections \
 				-Wall \
-				-Werror \
 				-O0 \
 				-m32 \
 				-march=i686 \

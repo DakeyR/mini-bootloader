@@ -11,6 +11,7 @@ SECTIONS
   .data :
   {
     * (.data*);
+    * (.rodata);
   }
   .end :
   {
