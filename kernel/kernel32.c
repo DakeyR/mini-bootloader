@@ -30,7 +30,7 @@ void setup_paging()
     pdpe[0] = ((unsigned long)pde) | PAGE_PRESENT | PAGE_WRITEABLE;
 
     u64 page_addr = 0x0;
-    for (u64 i = 0; i < ARRAY_SIZE(pde); i++, page_addr += 2 * MEGABYTE)
+    for (u64 i = 0; i < 2; i++, page_addr += 2 * MEGABYTE)
         pde[i] = page_addr | PAGE_PRESENT | PAGE_SIZE | PAGE_WRITEABLE;
 
     //Moving pml level-4 table into cr3
