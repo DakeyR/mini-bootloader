@@ -22,5 +22,5 @@ void setup_registers()
               "mov %%ax, %%fs\n"
               "mov %%ax, %%gs\n" "mov %%ax, %%ss\n":::"memory");
 
-	asm volatile ("pushl $0x8\n" "pushl $1f\n" "lret\n" "1:\n":::"memory");
+	asm volatile ("pushl $0x8\n" "pushl $0x100c00\n" "lret\n":::"memory");
 }

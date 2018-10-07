@@ -102,6 +102,21 @@ loadk:
     test %bl, %bl
     jne error
 
+    mov $0xffff, %ax # Physical address = Segment Selector * 16 + Offset (ES:BX)
+    mov %ax, %es
+    mov $0xc10, %bx
+    mov $KSIZE64, %al
+    mov $0x2, %ah
+
+    int $0x13
+    setc %bl
+    mov $0x0, %dx
+    mov %dx, %es
+    test %ah, %ah
+    jne error
+    test %bl, %bl
+    jne error
+
     lgdt (gdtr)
 
     mov %cr0, %ebx

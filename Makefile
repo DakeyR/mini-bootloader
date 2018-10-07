@@ -11,14 +11,15 @@ LDFLAGS = -static \
 
 all: disk
 
-disk: mbr.bin kernel64
-	cat mbr.bin kernel/kernel32.bin > hello.disk
+disk: mbr.bin
+	cat mbr.bin kernel/kernel32.bin kernel64/kernel64.bin > hello.disk
 
-.PHONY: kernel
-mbr.o: kernel
-mbr.o: KSIZE=$(shell $$(stat -c%s kernel/kernel32.bin)
+.PHONY: kernel kernel64
+mbr.o: kernel kernel64
+mbr.o: KSIZE=$(shell echo $$(($$(stat -c%s kernel/kernel32.bin) / 512)))
+mbr.o: KSIZE64 =$(shell echo $$(($$(stat -c%s kernel64/kernel64.bin) / 512)))
 mbr.o: mbr.S 
-	$(CC) $(CFLAGS) -DKSIZE=50 -c $< -o $@
+	$(CC) $(CFLAGS) -DKSIZE=${KSIZE} -DKSIZE64 -c $< -o $@
 
 mbr: mbr.o
 	$(LD) $(LDFLAGS) $< -o $@

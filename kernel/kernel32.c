@@ -8,8 +8,9 @@
 #define PAGE_PRESENT (1 << 0)
 #define PAGE_WRITEABLE (1 << 1)
 #define MEGABYTE (1 << 20)
-#define GDT_L_FLAG (1 << 21)
-#define GDT_DB_FLAG (1 << 22)
+
+#define GDT_L_FLAG ((u64)1 << 53)
+#define GDT_DB_FLAG ((u64)1 << 54)
 
 u64 pml4e[1] __attribute__((aligned(0x1000)));
 u64 pdpe[1] __attribute__((aligned(0x1000)));
@@ -17,8 +18,8 @@ u64 pde[512] __attribute__((aligned(0x1000)));
 
 u64 gdt[3] = {
     0x0000000000000000,
-    (0x00cf9a000000ffff & GDT_L_FLAG) ^ GDT_DB_FLAG,
-    (0x00cf93000000ffff & GDT_L_FLAG) ^ GDT_DB_FLAG
+    (0x00cf9a000000ffff | GDT_L_FLAG) ^ GDT_DB_FLAG,
+    (0x00cf93000000ffff | GDT_L_FLAG) ^ GDT_DB_FLAG
 };
 
 void setup_paging()
@@ -54,10 +55,9 @@ void setup_paging()
 
 int main(void)
 {
-    /*setup_paging();
+    setup_paging();
     load_gdt();
     setup_registers();
-    */
 
     asm volatile ("hlt");
 

@@ -12,4 +12,5 @@ SECTIONS
   {
     * (.data*);
   }
+  . = ALIGN(512);
 }
