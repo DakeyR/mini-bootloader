@@ -16,10 +16,12 @@ u64 pml4e[1] __attribute__((aligned(0x1000)));
 u64 pdpe[1] __attribute__((aligned(0x1000)));
 u64 pde[512] __attribute__((aligned(0x1000)));
 
+
+
 u64 gdt[3] = {
     0x0000000000000000,
-    (0x00cf9a000000ffff | GDT_L_FLAG) ^ GDT_DB_FLAG,
-    (0x00cf93000000ffff | GDT_L_FLAG) ^ GDT_DB_FLAG
+    (0x00af9a000000ffff | GDT_L_FLAG) & (~GDT_DB_FLAG),
+    (0x00af93000000ffff | GDT_L_FLAG) & (~GDT_DB_FLAG)
 };
 
 void setup_paging()
@@ -56,8 +58,10 @@ void setup_paging()
 int main(void)
 {
     setup_paging();
-    load_gdt();
-    setup_registers();
+    //load_gdt();
+    //setup_registers();
+
+	asm volatile ("pushl $0x8\n" "pushl $0x100c00\n" "lret\n":::"memory");
 
     asm volatile ("hlt");
 

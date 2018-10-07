@@ -17,9 +17,9 @@ disk: mbr.bin
 .PHONY: kernel kernel64
 mbr.o: kernel kernel64
 mbr.o: KSIZE=$(shell echo $$(($$(stat -c%s kernel/kernel32.bin) / 512)))
-mbr.o: KSIZE64 =$(shell echo $$(($$(stat -c%s kernel64/kernel64.bin) / 512)))
+mbr.o: KSIZE64 =$(shell echo $$(($$(stat -c%s kernel64/kernel64.bin) / 512 + 3)))
 mbr.o: mbr.S 
-	$(CC) $(CFLAGS) -DKSIZE=${KSIZE} -DKSIZE64 -c $< -o $@
+	$(CC) $(CFLAGS) -DKSIZE=${KSIZE} -DKSIZE64=${KSIZE64} -c $< -o $@
 
 mbr: mbr.o
 	$(LD) $(LDFLAGS) $< -o $@
@@ -37,6 +37,6 @@ debug:
 	gdb -ix gdb_init_real_mode.txt mbr
 
 clean:
-	$(RM) mbr.bin mbr mbr.o
+	$(RM) mbr.bin mbr mbr.o hello.disk
 	$(MAKE) clean -C kernel
 	$(MAKE) clean -C kernel64

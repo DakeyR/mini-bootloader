@@ -2,10 +2,10 @@
 
 int kernel64_entry(void)
 {
+    printf("Hello World\n");
+
     for (;;)
         asm volatile ("hlt");
-
-    printf("Hello World\n");
 
     return 0;
 }

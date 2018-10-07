@@ -66,6 +66,7 @@ loadk:
     and $0x3f, %cl
     mov %dh, %ch
     pop %dx
+    push %dx
     mov %ch, %dh
     #cyl (ch) = lba (1) / (heads(dh) * spt(cl))
     mov %cl, %al
@@ -102,13 +103,17 @@ loadk:
     test %bl, %bl
     jne error
 
+    pop %dx
+
     mov $0xffff, %ax # Physical address = Segment Selector * 16 + Offset (ES:BX)
+    mov $0x8, %cl
     mov %ax, %es
     mov $0xc10, %bx
     mov $KSIZE64, %al
     mov $0x2, %ah
 
     int $0x13
+
     setc %bl
     mov $0x0, %dx
     mov %dx, %es

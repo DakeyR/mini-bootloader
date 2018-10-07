@@ -12,4 +12,10 @@ SECTIONS
   {
     * (.data*);
   }
+  .end :
+  {
+    BYTE(0x0);
+    . = ALIGN(512) - 1;
+    BYTE(0x0);
+  }
 }
