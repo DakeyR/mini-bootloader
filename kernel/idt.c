@@ -1,4 +1,3 @@
-#include "io.h"
 #include "idt.h"
 #include "handlers.h"
 
@@ -102,58 +101,6 @@ void load_idt()
 	asm volatile ("lidt %0\n" "sti"::"m" (idtr)
 		      :"memory");
 
-  outb(0x21, 0xFC);
-
-}
-
-void set_pic()
-{
-    //ICW1
-    outb(0x20, 0x11);
-    outb(0xA0, 0x11);
-
-    //ICW2
-    outb(0x21, 0x20);
-    outb(0xA1, 0x28);
-
-    //ICW3
-    outb(0x21, 0x04);//0x03
-    outb(0xA1, 0x02);
-
-    //ICW4
-    outb(0x21, 0x01);//0x02
-    outb(0xA1, 0x01);//0x02
-
-    //OCW1
-    outb(0x21, 0xFF);
-    outb(0xA1, 0xFF);
-
-
-
-    int divider = 1193182/100;
-
-    //timer setup
-    outb(0x43, 0x34);
-    outb(0x40, divider & 0xFF);
-    outb(0x40, (divider >> 8) & 0xFF);
-}
-void idt_pretty_printer()
-{
-  for (int i = 0; i < 33; i++)
-  {
-    printf ("----- Segment %d -----\n", i);
-    printf ("offset lsb: %d, selector: %d, type: %d, reserved: %d, dpl: %d\n",
-            idt[i].offset_lsb, idt[i].selector, idt[i].type, idt[i].reserved, idt[i].dpl);
-    printf ("p: %d, offset msb: %d, zeros: %d\n",
-            idt[i].p, idt[i].offset_msb, idt[i].zeros);
-    printf ("----------------------\n");
-  }
-  int i = 128;
-  printf ("----- Segment %d -----\n", i);
-    printf ("offset lsb: %d, selector: %d, type: %d, reserved: %d, dpl: %d\n",
-            idt[i].offset_lsb, idt[i].selector, idt[i].type, idt[i].reserved, idt[i].dpl);
-    printf ("p: %d, offset msb: %d, zeros: %d\n",
-            idt[i].p, idt[i].offset_msb, idt[i].zeros);
-    printf ("----------------------\n");
+ // outb(0x21, 0xFC);
 
 }

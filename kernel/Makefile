@@ -17,11 +17,10 @@ LDFLAGS = -static \
 					-melf_i386
 
 KOBJS=kernel32.o \
-			printf.o \
-			puts.o \
 			idt.o \
 			handlers.o \
-			general_handler.o
+			general_handler.o \
+			gdt.o
 
 
 all: kernel32.bin
