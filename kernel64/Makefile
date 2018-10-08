@@ -19,11 +19,10 @@ KOBJS=kernel64.o \
 			printf.o \
 			puts.o
 
-
 all: ${ELF}.bin
 
 ${ELF}: $(KOBJS)
-	$(LD) $(LDFLAGS) $^ -o $@
+	$(LD) $(LDFLAGS) $^ ${EXTRA_OBJECT} -o $@
 
 ${ELF}.bin: ${ELF}
 	objcopy -O binary $< $@

@@ -1,8 +1,10 @@
 #include "io.h"
 
+void win(int (*printf_ptr)(const char *fmt, ...));
+
 int kernel64_entry(void)
 {
-    printf("Hello World\n");
+    win(printf);
 
     for (;;)
         asm volatile ("hlt");

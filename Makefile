@@ -31,7 +31,7 @@ kernel:
 	$(MAKE) -C kernel
 
 kernel64:
-	$(MAKE) -C kernel64
+	EXTRA_OBJECT=../${EXTRA_OBJECT} $(MAKE) -C kernel64
 
 debug:
 	gdb -ix gdb_init_real_mode.txt mbr
