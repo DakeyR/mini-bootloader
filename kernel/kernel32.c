@@ -20,8 +20,8 @@ u64 pde[512] __attribute__((aligned(0x1000)));
 
 u64 gdt[3] = {
     0x0000000000000000,
-    (0x00cf9a000000ffff | GDT_L_FLAG) & (~GDT_DB_FLAG),
-    (0x00cf93000000ffff | GDT_L_FLAG) & (~GDT_DB_FLAG)
+    0x00af9a000000ffff,
+    0x00af93000000ffff
 };
 
 void setup_paging()
@@ -30,38 +30,38 @@ void setup_paging()
     pdpe[0] = ((unsigned long)pde) | PAGE_PRESENT | PAGE_WRITEABLE;
 
     u64 page_addr = 0x0;
-    for (u64 i = 0; i < 2; i++, page_addr += 2 * MEGABYTE)
+    for (u64 i = 0; i <= 2; i += 2, page_addr += 2 * MEGABYTE)
         pde[i] = page_addr | PAGE_PRESENT | PAGE_SIZE | PAGE_WRITEABLE;
 
     //Moving pml level-4 table into cr3
     asm volatile ("mov %0, %%eax\n"
-                  "mov %%eax, %%cr3\n"::"m" (pml4e)
+                  "mov %%eax, %%cr3\n"::"r" (pml4e)
                   :"memory");
 
     //Activating LME with EFER_MSR
     asm volatile ("mov $0xC0000080, %%ecx\n"
                   "rdmsr\n"
-                  "or (1 << 8), %%eax\n"
+                  "or $0x100, %%eax\n"
                   "wrmsr\n":::"memory");
 
     //Activating PAE with cr4
     asm volatile ("mov %%cr4, %%eax\n"
-                  "or (1 << 5), %%eax\n"
+                  "or $0x20, %%eax\n"
                   "mov %%eax, %%cr4\n":::"memory");
 
     //Activating Paging (PG=1 in cr0)
-    asm volatile ("mov %%cr0, %%eax\n"
-                  "or (1 << 31), %%eax\n"
-                  "mov %%eax, %%cr0\n":::"memory");
+    u64 cr0;
+    asm volatile ("mov %%cr0, %0":"=r" (cr0));
+    asm volatile ("mov %0, %%cr0"::"r" (cr0 | (1 << 31)));
+
+
 }
 
 int main(void)
 {
     setup_paging();
-    /*
-     * load_gdt();
-     * setup_registers();
-     */
+    load_gdt();
+    setup_registers();
 
 	asm volatile ("pushl $0x8\n" "pushl $0x100c00\n" "lret\n":::"memory");
 
